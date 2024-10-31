@@ -1,5 +1,8 @@
 import os
+from loguru import logger
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+BASEDIR = os.path.dirname(os.path.abspath(__file__))
 
 
 class Settings(BaseSettings):
@@ -19,8 +22,14 @@ class Settings(BaseSettings):
     REDIS_HOST: str
     REDIS_PORT: int
 
+    FORMAT_LOG: str = "{time:YYYY-MM-DD at HH:mm:ss} | {level} | {message}"
+    LOG_ROTATION: str = "10 MB"
+
+    ACCESS_TOKEN_EXPIRE_MINUTES: int = 15
+    REFRESH_TOKEN_EXPIRE_DAYS: int = 30
+
     model_config = SettingsConfigDict(
-        env_file=os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", ".env")
+        env_file=os.path.join(BASEDIR, "..", ".env")
     )
 
     @property
@@ -30,6 +39,7 @@ class Settings(BaseSettings):
 
 settings = Settings()
 
-
-def get_auth_data():
-    return {"secret_key": settings.SECRET_KEY, "algorithm": settings.ALGORITHM}
+log_file_path = os.path.join(BASEDIR, "..",  "log.txt")
+logger.add(
+    log_file_path, format=settings.FORMAT_LOG, rotation=settings.LOG_ROTATION, retention="7 days", compression="zip"
+)

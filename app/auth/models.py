@@ -10,4 +10,4 @@ class Users(Base):
     password_hash: Mapped[str] = mapped_column(String, nullable=False)
 
     def __str__(self):
-        return f"User {self.username}"
+        return f"User-{self.id} {self.username}"
