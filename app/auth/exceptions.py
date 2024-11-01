@@ -7,17 +7,17 @@ class UserAlreadyExistsException(AppBaseException):
     detail = "Пользователь уже существует"
 
 
+class PasswordException(AppBaseException):
+    status_code = status.HTTP_401_UNAUTHORIZED
+    detail = 'Пароли не совпадают'
+
+
 class IncorrectUsernameOrPasswordException(AppBaseException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Неверное имя пользователя или пароль'
 
 
 class TokenExpiredException(AppBaseException):
-    status_code = status.HTTP_401_UNAUTHORIZED
-    detail = 'Токен истек'
-
-
-class TokenNoFound(AppBaseException):
     status_code = status.HTTP_401_UNAUTHORIZED
     detail = 'Токен истек'
 

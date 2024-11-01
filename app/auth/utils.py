@@ -1,30 +1,18 @@
-from jose import jwt
-import uuid
+from jose import jwt, JWTError
+from app.auth.exceptions import NoJwtException
 from app.config import settings
-from datetime import timedelta, datetime, timezone
+from datetime import datetime, timezone
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def encode_jwt(
+def encode_jwt_token(
     payload: dict,
     private_key: str = settings.SECRET_KEY,
-    algorithm: str = settings.ALGORITHM,
-    expire_minutes: int = settings.ACCESS_TOKEN_EXPIRE_MINUTES,
-    expire_timedelta: timedelta | None = None,
+    algorithm: str = settings.ALGORITHM
 ) -> str:
     to_encode = payload.copy()
-    now = datetime.now(timezone.utc)
-    if expire_timedelta:
-        expire = now + expire_timedelta
-    else:
-        expire = now + timedelta(minutes=expire_minutes)
-    to_encode.update(
-        exp=expire,
-        iat=now,
-        jti=str(uuid.uuid4()),
-    )
     encoded = jwt.encode(
         to_encode,
         private_key,
@@ -33,10 +21,10 @@ def encode_jwt(
     return encoded
 
 
-def decode_jwt(
-    token: str | bytes,
+def decode_jwt_token(
+    token: str,
     public_key: str = settings.SECRET_KEY,
-    algorithm: str = settings.ALGORITHM,
+    algorithm: str = settings.ALGORITHM
 ) -> dict:
     decoded = jwt.decode(
         token,
