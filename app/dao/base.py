@@ -2,7 +2,7 @@ from typing import TypeVar, Generic, List, Optional
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
-from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete, func
+from sqlalchemy import update as sqlalchemy_update, delete as sqlalchemy_delete
 from app.database import connection
 from app.database import Base
 from loguru import logger
@@ -12,7 +12,7 @@ T = TypeVar("T", bound=Base)
 
 
 class BaseDAO(Generic[T]):
-    model: type[T]
+    model: type[T]  # Модель, с которой будет работать DAO
 
     @classmethod
     @connection

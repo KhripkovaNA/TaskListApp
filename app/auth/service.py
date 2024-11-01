@@ -1,8 +1,7 @@
-from loguru import logger
 from app.auth.auth import authenticate_user, create_access_token, create_refresh_token, validate_refresh_token
 from app.auth.dao import UsersDAO
 from app.auth.exceptions import UserAlreadyExistsException, IncorrectUsernameOrPasswordException
-from app.auth.schemas import SUserRegister, SUsername, SUserAdd, SUserAuth, SAuthData2
+from app.auth.schemas import SUserRegister, SUsername, SUserAdd, SUserAuth, SAuthRefresh
 
 
 async def register(user_data: SUserRegister):
@@ -21,7 +20,7 @@ async def login(user_data: SUserAuth, request) -> tuple:
     return access_token, refresh_token
 
 
-async def refresh(request, token_data: SAuthData2) -> tuple:
+async def refresh(request, token_data: SAuthRefresh) -> tuple:
     sub = await validate_refresh_token(token_data, request)
     access_token = create_access_token({"sub": sub})
     refresh_token = await create_refresh_token({"sub": sub}, token_data.fingerprint, request)

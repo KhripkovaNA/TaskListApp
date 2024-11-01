@@ -10,9 +10,10 @@ from app.config import settings as cfg
 
 @asynccontextmanager
 async def lifespan(application: FastAPI):
+    # Создаем подключение к Redis
     redis = aioredis.from_url(f"redis://{cfg.REDIS_HOST}:{cfg.REDIS_PORT}")
-    application.state.redis = redis
-    yield
+    # Возвращаем объект Redis для использования в приложении
+    yield {"redis": redis}
 
 
 # Инициализация FastAPI приложения
@@ -26,7 +27,7 @@ app.include_router(users_router)
 app.include_router(tasks_router)
 
 
-# Глобальный обработчик для всех исключений, унаследованных от AppBaseException
+# Глобальный обработчик для всех исключений, унаследованных от HTTPException
 @app.exception_handler(HTTPException)
 async def app_base_exception_handler(request: Request, e: HTTPException):
     # Логирование ошибки с нужной информацией

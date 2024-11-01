@@ -11,7 +11,7 @@ class UsersDAO(BaseDAO[Users]):
 class AuthDAO:
     def __init__(self, data, request):
         # Инициализация AuthDAO с Redis-соединением и данными
-        self.redis = request.app.state.redis
+        self.redis = request.state.redis
         self.data = data
 
     async def add(self):

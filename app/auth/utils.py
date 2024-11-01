@@ -1,7 +1,5 @@
-from jose import jwt, JWTError
-from app.auth.exceptions import NoJwtException
-from app.config import settings
-from datetime import datetime, timezone
+from jose import jwt
+from app.config import settings as cfg
 from passlib.context import CryptContext
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
@@ -9,8 +7,8 @@ pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 def encode_jwt_token(
     payload: dict,
-    private_key: str = settings.SECRET_KEY,
-    algorithm: str = settings.ALGORITHM
+    private_key: str = cfg.SECRET_KEY,
+    algorithm: str = cfg.ALGORITHM
 ) -> str:
     to_encode = payload.copy()
     encoded = jwt.encode(
@@ -23,8 +21,8 @@ def encode_jwt_token(
 
 def decode_jwt_token(
     token: str,
-    public_key: str = settings.SECRET_KEY,
-    algorithm: str = settings.ALGORITHM
+    public_key: str = cfg.SECRET_KEY,
+    algorithm: str = cfg.ALGORITHM
 ) -> dict:
     decoded = jwt.decode(
         token,

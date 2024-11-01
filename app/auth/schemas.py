@@ -36,23 +36,20 @@ class SUserRead(SUsername):
     id: int = Field(..., description="Идентификатор пользователя")
 
 
-class SAuthData(BaseModel):
+class SAuthRead(BaseModel):
     sub: str = Field(..., description="Идентификатор пользователя для токена аутентификации")
     jti: str = Field(..., description="Уникальный идентификатор токена")
     exp: datetime = Field(..., description="Время истечения токена")
+    fingerprint: str = Field(..., description="Идентификатор устройства или браузера")
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class SAuthRead(SAuthData):
-    fingerprint: str = Field(..., description="Идентификатор устройства или браузера")
 
 
 class SAuthAdd(SAuthRead):
     token: str = Field(..., description="Токен доступа для аутентификации")
 
 
-class SAuthData2(BaseModel):
+class SAuthRefresh(BaseModel):
     fingerprint: str = Field(..., description="Идентификатор устройства или браузера")
     token: str = Field(..., description="Токен доступа для аутентификации")
 

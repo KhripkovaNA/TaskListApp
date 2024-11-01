@@ -13,7 +13,7 @@ class TasksDAO(BaseDAO[Tasks]):
 
     @classmethod
     @connection
-    async def find_all_by_user_id(cls, user_id: int, session: AsyncSession, filters: Optional[BaseModel] = None):
+    async def find_all_by_user_id(cls, user_id: int, session: AsyncSession, filters: Optional[BaseModel]):
         # Если фильтры не заданы, получаем все записи пользователя
         query = select(cls.model).filter_by(user_id=user_id)
         if filters:

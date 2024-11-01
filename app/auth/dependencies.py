@@ -2,7 +2,7 @@ from fastapi import Request, HTTPException, status, Depends
 from jose import JWTError
 from datetime import datetime, timezone
 from app.auth.constants import ACCESS_TOKEN_TYPE, REFRESH_TOKEN_TYPE
-from app.auth.schemas import SUserRead
+from app.auth.schemas import SUserRead, SAuthRefresh
 from app.auth.utils import decode_jwt_token
 from app.auth.exceptions import NoJwtException, NoUserIdException
 from app.auth.dao import UsersDAO
@@ -38,9 +38,9 @@ async def get_current_user(token: str = Depends(get_token)) -> SUserRead:
     return user
 
 
-def get_refresh_token_data(token: str) -> dict:
+def get_refresh_token_data(data: SAuthRefresh) -> dict:
     try:
-        payload = decode_jwt_token(token)
+        payload = decode_jwt_token(data.token)
     except JWTError:
         raise NoJwtException
 
@@ -53,6 +53,7 @@ def get_refresh_token_data(token: str) -> dict:
     data = dict(
         sub=payload.get('sub'),
         exp=payload.get('exp'),
-        jti=payload.get('jti')
+        jti=payload.get('jti'),
+        fingerprint=data.fingerprint
     )
     return data

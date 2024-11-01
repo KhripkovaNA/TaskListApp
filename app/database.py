@@ -2,22 +2,22 @@ from datetime import datetime
 from sqlalchemy import func
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine, async_sessionmaker, AsyncAttrs
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
-from app.config import settings
+from app.config import settings as cfg
 
-# Get db URL from config
-database_url = settings.DATABASE_URL
-# Asynchronous db engine
+# URL базы данных из конфигурации
+database_url = cfg.DATABASE_URL
+# Асинхронный движок для подключения к базе данных
 engine = create_async_engine(database_url)
-# Session maker for asynchronous sessions with db
+# Создатель асинхронных сессий для подключения к базе данных
 async_session_maker = async_sessionmaker(engine, class_=AsyncSession, expire_on_commit=False)
 
 
-# Decorator for creating db sessions for any function it wraps
+# Декоратор для создания сессий базы данных для любой функции, которую он оборачивает
 def connection(method):
     async def wrapper(*args, **kwargs):
         async with async_session_maker() as session:
             try:
-                return await method(*args, session=session, **kwargs)  # Pass session to the decorated method
+                return await method(*args, session=session, **kwargs)  # Передаем сессию в декорируемый метод
             except Exception as e:
                 await session.rollback()
                 raise e
@@ -26,7 +26,7 @@ def connection(method):
     return wrapper
 
 
-# Base class for all ORM models
+# Базовый класс для всех ORM моделей
 class Base(AsyncAttrs, DeclarativeBase):
     __abstract__ = True
 
